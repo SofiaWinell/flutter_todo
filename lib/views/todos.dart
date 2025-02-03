@@ -12,19 +12,22 @@ class Todos extends StatefulWidget {
 }
 
 class TodosState extends State<Todos> {
-  void _addTodo() async {
+  // Funkcja odpowiedzialna za dodanie zadania
+  void _addTodo() {
+    if (!mounted) return;
     showModalBottomSheet(
       context: context,
       builder: (ctx) => AddTodo(
         addTodo: (title) async {
-          if (title.trim().isEmpty) return;
-          try {
-            await Provider.of<TodoProvider>(context, listen: false).addTodo(title);
-            if (!mounted) return;
-            setState(() {}); // ✅ Odświeżanie UI po dodaniu zadania
-            Navigator.of(ctx).pop();
-          } catch (e) {
-            print("Błąd dodawania: $e");
+          // Upewniamy się, że widget jest wciąż zamontowany
+          if (!mounted) return;
+
+          // Dodanie nowego zadania
+          await Provider.of<TodoProvider>(context, listen: false).addTodo(title);
+
+          // Używamy Navigator.of(context) po zakończeniu operacji
+          if (mounted) {
+            Navigator.of(context).pop();
           }
         },
       ),

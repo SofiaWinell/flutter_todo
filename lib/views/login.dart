@@ -14,27 +14,26 @@ class LoginState extends State<Login> {
   String email = '';
   String password = '';
 
- Future<void> submit() async {
-  final form = formKey.currentState;
-  if (form!.validate()) {
-    form.save();
+  Future<void> submit() async {
+    final form = formKey.currentState;
+    if (form!.validate()) {
+      form.save();
 
-    final String? success = await Provider.of<AuthProvider>(context, listen: false)
-        .login(email, password);
+      final bool success = await Provider.of<AuthProvider>(context, listen: false)
+          .login(email, password);
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    if (success == null) { // ✅ Jeśli success to null, wyświetlamy błąd
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login failed.')),
-      );
-    } else {
-      Navigator.pushReplacementNamed(context, '/todos'); // ✅ Logowanie udane
+      // Teraz porównujemy z false, nie null
+      if (!success) { // Jeśli success to false, wyświetlamy błąd
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login failed.')),
+        );
+      } else {
+        Navigator.pushReplacementNamed(context, '/todos'); // Logowanie udane
+      }
     }
   }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +72,10 @@ class LoginState extends State<Login> {
                 onPressed: submit,
                 child: const Text('Login'),
               ),
-              const SizedBox(height: 10), // 🆕 Dodane odstępy
+              const SizedBox(height: 10),
               TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/register'); // 🆕 Przycisk do rejestracji
+                  Navigator.pushNamed(context, '/register');
                 },
                 child: const Text("Nie masz konta? Zarejestruj się"),
               ),
@@ -87,6 +86,7 @@ class LoginState extends State<Login> {
     );
   }
 }
+
 
 
 

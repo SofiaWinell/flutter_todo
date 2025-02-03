@@ -17,7 +17,8 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider(apiService)),
-        ChangeNotifierProvider(create: (_) => TodoProvider(apiService)),
+        ChangeNotifierProvider<TodoProvider>(create: (context) => TodoProvider(),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -35,12 +36,12 @@ class MyApp extends StatelessWidget {
           if (auth.isAuthenticated) {
             return const Todos();
           } else {
-            return const Login(); // ✅ Dodaj tutaj warunek na rejestrację
+            return const Login(); // warunek na rejestrację
           }
         },
       ),
       routes: {
-        '/register': (context) => const Register(), // ✅ Dodaj trasę do rejestracji
+        '/register': (context) => const Register(), // trasę do rejestracji
         '/login': (context) => const Login(),
         '/todos': (context) => const Todos(),
       },

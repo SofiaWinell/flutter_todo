@@ -15,7 +15,7 @@ class ApiService {
         Uri.parse('$_authBaseUrl/login'),
         body: {'email': email, 'password': password},
       );
-      print('Login response: ${response.body}'); // 🛠️ Debugging
+      print('Login response: ${response.body}'); // Debugging
       return response.statusCode == 200;
     } catch (e) {
       print('Login error: $e');
@@ -29,7 +29,7 @@ class ApiService {
         Uri.parse('$_authBaseUrl/register'),
         body: {'email': email, 'password': password},
       );
-      print('Register response: ${response.body}'); // 🛠️ Debugging
+      print('Register response: ${response.body}'); // Debugging
       return response.statusCode == 200;
     } catch (e) {
       print('Register error: $e');

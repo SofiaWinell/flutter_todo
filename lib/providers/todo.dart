@@ -8,6 +8,7 @@ class TodoProvider extends ChangeNotifier {
 
   List<Todo> get openTodos => _openTodos;
 
+  // Metoda do pobierania zadań z API
   Future<void> fetchTodos() async {
     try {
       final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/todos'));
@@ -23,6 +24,7 @@ class TodoProvider extends ChangeNotifier {
     }
   }
 
+  // Metoda do dodawania nowego zadania
   Future<void> addTodo(String title) async {
     try {
       final newTodo = Todo(
@@ -37,10 +39,25 @@ class TodoProvider extends ChangeNotifier {
     }
   }
 
+  // Metoda do usuwania zadania
   Future<void> deleteTodo(int id) async {
     _openTodos.removeWhere((todo) => todo.id == id);
     notifyListeners();
   }
+
+  // Dodana metoda toggleTodo do zmiany stanu zadania
+  Future<void> toggleTodo(Todo todo) async {
+    try {
+      final todoIndex = _openTodos.indexWhere((t) => t.id == todo.id);
+      if (todoIndex >= 0) {
+        _openTodos[todoIndex].completed = !_openTodos[todoIndex].completed; // Zmieniamy status zadania
+        notifyListeners();  // Powiadamiamy, że dane się zmieniły
+      }
+    } catch (e) {
+      print("Błąd w toggleTodo: $e");
+    }
+  }
 }
+
 
 
