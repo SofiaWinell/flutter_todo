@@ -19,13 +19,8 @@ class TodosState extends State<Todos> {
       context: context,
       builder: (ctx) => AddTodo(
         addTodo: (title) async {
-          // Upewniamy się, że widget jest wciąż zamontowany
           if (!mounted) return;
-
-          // Dodanie nowego zadania
           await Provider.of<TodoProvider>(context, listen: false).addTodo(title);
-
-          // Używamy Navigator.of(context) po zakończeniu operacji
           if (mounted) {
             Navigator.of(context).pop();
           }
@@ -33,6 +28,9 @@ class TodosState extends State<Todos> {
       ),
     );
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -32,7 +32,7 @@ class TodoProvider extends ChangeNotifier {
         title: title,
         completed: false,
       );
-      _openTodos.add(newTodo);
+      _openTodos = [..._openTodos, newTodo]; // Kopiujemy listę, żeby Flutter to zauważył
       notifyListeners();
     } catch (e) {
       print("Błąd w addTodo: $e");
