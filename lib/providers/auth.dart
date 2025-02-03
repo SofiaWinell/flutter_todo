@@ -14,7 +14,6 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _isAuthenticated;
   String? get token => _token;
 
-  /// Sprawdza, czy użytkownik jest zalogowany po uruchomieniu aplikacji
   Future<void> initAuthProvider() async {
     final prefs = await SharedPreferences.getInstance();
     _token = prefs.getString('auth_token');
@@ -22,7 +21,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Logowanie użytkownika
   Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
@@ -47,7 +45,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Rejestracja użytkownika
   Future<bool> register(String email, String password) async {
     bool success = await _apiService.register(email, password);
     if (success) {
@@ -57,7 +54,6 @@ class AuthProvider extends ChangeNotifier {
     return success;
   }
 
-  /// Wylogowanie użytkownika
   Future<void> logOut() async {
     _isAuthenticated = false;
     _token = null;

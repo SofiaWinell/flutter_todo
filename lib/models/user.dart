@@ -2,12 +2,19 @@ class User {
   final String email;
   final String password;
 
-  User({
+  const User({
     required this.email,
     required this.password,
   });
 
-  Map<String, String> toJson() {
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      email: json['email'] ?? '',
+      password: json['password'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
     return {'email': email, 'password': password};
   }
 }

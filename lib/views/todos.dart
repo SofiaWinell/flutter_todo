@@ -22,7 +22,8 @@ class TodosState extends State<Todos> {
           if (!mounted) return;
           await Provider.of<TodoProvider>(context, listen: false).addTodo(title);
           if (mounted) {
-            Navigator.of(context).pop(); // Zamykamy modal po dodaniu zadania
+            setState(() {}); // Poprawione! Odświeżenie widoku po dodaniu zadania
+            Navigator.of(context).pop(); // Zamykamy modal
           }
         },
       ),
@@ -31,30 +32,27 @@ class TodosState extends State<Todos> {
 
   @override
   Widget build(BuildContext context) {
-    final todoProvider = Provider.of<TodoProvider>(context);
-    final todos = todoProvider.todos; 
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('To-Do List'),
       ),
-      body: todos.isEmpty
-          ? const Center(child: Text("Brak zadań."))
-          : TodoList(
-              todos: todos,
-              onToggle: (todo) async {
-                await Provider.of<TodoProvider>(context, listen: false).toggleTodo(todo.id);
-                if (mounted) {
-                  setState(() {}); // Odświeżamy widok po zmianie statusu
-                }
-              },
-              onDelete: (todo) async {
-                await Provider.of<TodoProvider>(context, listen: false).deleteTodo(todo.id);
-                if (mounted) {
-                  setState(() {}); // Odświeżamy widok po usunięciu zadania
-                }
-              },
-            ),
+   body: Consumer<TodoProvider>(
+  builder: (context, todoProvider, child) {
+    final todos = todoProvider.todos;
+    return todos.isEmpty
+        ? const Center(child: Text("Brak zadań."))
+        : TodoList(
+            todos: todos,
+            onToggle: (todo) async {
+              await todoProvider.toggleTodo(todo.id);
+            },
+            onDelete: (todo) async {
+              await todoProvider.deleteTodo(todo.id);
+            },
+          );
+  },
+),
+
       floatingActionButton: FloatingActionButton(
         onPressed: _addTodo,
         child: const Icon(Icons.add),
@@ -62,3 +60,4 @@ class TodosState extends State<Todos> {
     );
   }
 }
+
