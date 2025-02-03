@@ -14,13 +14,19 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _isAuthenticated;
   String? get token => _token;
 
+  // Inicjalizacja AuthProvider z tokenem z SharedPreferences
   Future<void> initAuthProvider() async {
-    final prefs = await SharedPreferences.getInstance();
-    _token = prefs.getString('auth_token');
-    _isAuthenticated = _token != null;
-    notifyListeners();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _token = prefs.getString('auth_token');
+      _isAuthenticated = _token != null;
+      notifyListeners();
+    } catch (e) {
+      print('Błąd podczas inicjalizacji AuthProvider: $e');
+    }
   }
 
+  // Logowanie użytkownika
   Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
@@ -32,11 +38,15 @@ class AuthProvider extends ChangeNotifier {
         final Map<String, dynamic> data = json.decode(response.body);
         _token = data['token'];
         _isAuthenticated = true;
+
+        // Zapisz token w SharedPreferences
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', _token!);
+
         notifyListeners();
         return true;
       } else {
+        print('Błąd logowania: ${response.statusCode}');
         return false;
       }
     } catch (e) {
@@ -45,20 +55,34 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // Rejestracja użytkownika
   Future<bool> register(String email, String password) async {
-    bool success = await _apiService.register(email, password);
-    if (success) {
-      _isAuthenticated = false;
+    try {
+      bool success = await _apiService.register(email, password);
+      if (success) {
+        _isAuthenticated = false;  // Po rejestracji użytkownik nie jest od razu zalogowany
+      }
+      notifyListeners();
+      return success;
+    } catch (e) {
+      print('Błąd podczas rejestracji: $e');
+      return false;
     }
-    notifyListeners();
-    return success;
   }
 
+  // Wylogowanie użytkownika
   Future<void> logOut() async {
-    _isAuthenticated = false;
-    _token = null;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
-    notifyListeners();
+    try {
+      _isAuthenticated = false;
+      _token = null;
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('auth_token');
+
+      notifyListeners();
+    } catch (e) {
+      print('Błąd podczas wylogowania: $e');
+    }
   }
 }
+
