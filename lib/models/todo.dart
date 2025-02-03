@@ -1,7 +1,7 @@
 class Todo {
   final int id;
   final String title;
-  late final bool completed;
+  final bool completed; // final przy completed
 
   Todo({
     required this.id,
@@ -17,7 +17,17 @@ class Todo {
     );
   }
 
-  String get status => completed ? 'closed' : 'open';
-  String get value => title;
-}
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'completed': completed,
+  };
 
+  Todo copyWith({int? id, String? title, bool? completed}) {
+    return Todo(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      completed: completed ?? this.completed,
+    );
+  }
+}

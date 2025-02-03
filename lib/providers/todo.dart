@@ -1,64 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import '../models/todo.dart';
 
+
 class TodoProvider extends ChangeNotifier {
-  List<Todo> _openTodos = [];
+  List<Todo> _todos = [];
 
-  List<Todo> get openTodos => _openTodos;
+  List<Todo> get todos => _todos;
 
-  // Metoda do pobierania zadań z API
+  // Funkcja do pobierania zadań (jeśli potrzebujesz)
   Future<void> fetchTodos() async {
-    try {
-      final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/todos'));
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(response.body);
-        _openTodos = jsonData.map((json) => Todo.fromJson(json)).toList();
-        notifyListeners();
-      } else {
-        throw Exception("Błąd pobierania zadań!");
-      }
-    } catch (e) {
-      print("Błąd w fetchTodos: $e");
-    }
+    // Tutaj możesz dodać logikę pobierania danych, ale ja nie chcę tego robić
+    notifyListeners(); 
   }
 
-  // Metoda do dodawania nowego zadania
   Future<void> addTodo(String title) async {
-    try {
-      final newTodo = Todo(
-        id: DateTime.now().millisecondsSinceEpoch, //tworzymy lokalny ID
-        title: title,
-        completed: false,
-      );
-      _openTodos = [..._openTodos, newTodo]; // Dodajemy zadanie lokalnie
-      notifyListeners();
-    } catch (e) {
-      print("Błąd w addTodo: $e");
-    }
-  }
-
-  // Metoda do usuwania zadania
-  Future<void> deleteTodo(int id) async {
-    _openTodos.removeWhere((todo) => todo.id == id);
+    final newTodo = Todo(
+      id: DateTime.now().millisecondsSinceEpoch,
+      title: title,
+      completed: false,
+    );
+    _todos = [..._todos, newTodo]; 
     notifyListeners();
   }
 
-  // Dodana metoda toggleTodo do zmiany stanu zadania
-  Future<void> toggleTodo(Todo todo) async {
-    try {
-      final todoIndex = _openTodos.indexWhere((t) => t.id == todo.id);
-      if (todoIndex >= 0) {
-        _openTodos[todoIndex].completed = !_openTodos[todoIndex].completed; // Zmieniamy status zadania
-        notifyListeners();  // Powiadamiamy, że dane się zmieniły
-      }
-    } catch (e) {
-      print("Błąd w toggleTodo: $e");
+  Future<void> toggleTodo(int id) async {
+    final index = _todos.indexWhere((todo) => todo.id == id);
+    if (index != -1) {
+      _todos[index] = _todos[index].copyWith(completed: !_todos[index].completed);
+      notifyListeners();
     }
   }
+
+  Future<void> deleteTodo(int id) async {
+    _todos.removeWhere((todo) => todo.id == id);
+    notifyListeners();
+  }
+
+
+  // Dodatkowe funkcje pomocnicze (opcjonalne)
+
+  // Funkcja do zapisywania zadań (np. do lokalnego pliku)
+  Future<void> saveTodos() async {
+    // Implementacja zapisu
+  }
+
+  // Funkcja do ładowania zadań (np. z lokalnego pliku)
+  Future<void> loadTodos() async {
+    // Implementacja odczytu
+    notifyListeners(); // Po załadowaniu danych, powiadom słuchaczy
+  }
+
+
+  // Funkcja do czyszczenia listy (opcjonalna)
+  void clearTodos() {
+    _todos.clear();
+    notifyListeners();
+  }
+
+
+  // Funkcja do testowania - dodaje kilka przykładowych zadań
+  void addSampleTodos() {
+    _todos.addAll([
+      Todo(id: 1, title: 'Zrobić zakupy', completed: false),
+      Todo(id: 2, title: 'Umyć samochód', completed: true),
+      Todo(id: 3, title: 'Napisać raport', completed: false),
+    ]);
+    notifyListeners();
+  }
 }
-
-
-
-

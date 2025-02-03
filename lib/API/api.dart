@@ -6,6 +6,7 @@ class ApiService {
   final String _authBaseUrl = 'https://reqres.in/api';
   final String _todosBaseUrl = 'https://jsonplaceholder.typicode.com';
 
+
  Future<bool> checkAuthStatus() async {
   return false;
 }

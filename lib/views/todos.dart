@@ -32,7 +32,7 @@ class TodosState extends State<Todos> {
   @override
   Widget build(BuildContext context) {
     final todoProvider = Provider.of<TodoProvider>(context);
-    final todos = todoProvider.openTodos;
+    final todos = todoProvider.todos; 
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +43,7 @@ class TodosState extends State<Todos> {
           : TodoList(
               todos: todos,
               onToggle: (todo) async {
-                await Provider.of<TodoProvider>(context, listen: false).toggleTodo(todo);
+                await Provider.of<TodoProvider>(context, listen: false).toggleTodo(todo.id);
                 if (mounted) {
                   setState(() {}); // Odświeżamy widok po zmianie statusu
                 }
