@@ -22,15 +22,12 @@ class TodosState extends State<Todos> {
           if (!mounted) return;
           await Provider.of<TodoProvider>(context, listen: false).addTodo(title);
           if (mounted) {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(); // Zamykamy modal po dodaniu zadania
           }
         },
       ),
     );
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +44,15 @@ class TodosState extends State<Todos> {
               todos: todos,
               onToggle: (todo) async {
                 await Provider.of<TodoProvider>(context, listen: false).toggleTodo(todo);
-                setState(() {});
+                if (mounted) {
+                  setState(() {}); // Odświeżamy widok po zmianie statusu
+                }
               },
               onDelete: (todo) async {
                 await Provider.of<TodoProvider>(context, listen: false).deleteTodo(todo.id);
-                setState(() {});
+                if (mounted) {
+                  setState(() {}); // Odświeżamy widok po usunięciu zadania
+                }
               },
             ),
       floatingActionButton: FloatingActionButton(

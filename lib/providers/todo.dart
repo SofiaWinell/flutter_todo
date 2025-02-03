@@ -28,11 +28,11 @@ class TodoProvider extends ChangeNotifier {
   Future<void> addTodo(String title) async {
     try {
       final newTodo = Todo(
-        id: DateTime.now().millisecondsSinceEpoch,
+        id: DateTime.now().millisecondsSinceEpoch, //tworzymy lokalny ID
         title: title,
         completed: false,
       );
-      _openTodos = [..._openTodos, newTodo]; // Kopiujemy listę, żeby Flutter to zauważył
+      _openTodos = [..._openTodos, newTodo]; // Dodajemy zadanie lokalnie
       notifyListeners();
     } catch (e) {
       print("Błąd w addTodo: $e");
@@ -58,6 +58,7 @@ class TodoProvider extends ChangeNotifier {
     }
   }
 }
+
 
 
 
