@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AddTodo extends StatefulWidget {
-  final Future<void> Function(String) addTodo; // ✅ Dostosowujemy do async
+  final Future<void> Function(String) addTodo;
 
   const AddTodo({Key? key, required this.addTodo}) : super(key: key);
 
@@ -11,7 +11,7 @@ class AddTodo extends StatefulWidget {
 
 class AddTodoState extends State<AddTodo> {
   final TextEditingController textController = TextEditingController();
-  bool isLoading = false; // ✅ Dodajemy ładowanie
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -21,16 +21,36 @@ class AddTodoState extends State<AddTodo> {
 
   Future<void> saveTodo() async {
     final text = textController.text.trim();
-    if (text.isNotEmpty) {
-      setState(() => isLoading = true); // ✅ Pokazujemy, że zapisujemy
-      try {
-        await widget.addTodo(text);
-      } catch (e) {
-        print('Error adding todo: $e');
+
+    if (text.isEmpty) {
+      // Sprawdzamy, czy widget jest zamontowany przed pokazaniem SnackBara
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Title cannot be empty")),
+        );
       }
-      if (!mounted) return;
-      setState(() => isLoading = false); // ✅ Resetujemy stan ładowania
-      Navigator.pop(context);
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      await widget.addTodo(text);
+      if (mounted) {
+        print("Zadanie dodane: $text"); // Debugging
+      }
+    } catch (e) {
+      if (mounted) {
+        print("Błąd dodawania zadania: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Error adding task")),
+        );
+      }
+    }
+
+    if (mounted) {
+      setState(() => isLoading = false);
+      Navigator.pop(context); // Zamykanie bottom sheet po dodaniu zadania
     }
   }
 
@@ -49,7 +69,7 @@ class AddTodoState extends State<AddTodo> {
           ),
           const SizedBox(height: 20),
           isLoading
-              ? const CircularProgressIndicator() // ✅ Pokazujemy ładowanie
+              ? const CircularProgressIndicator()
               : ElevatedButton(
                   onPressed: saveTodo,
                   child: const Text('Save'),

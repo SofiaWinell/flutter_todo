@@ -11,6 +11,8 @@ class TodoProvider extends ChangeNotifier {
     addSampleTodos(); // Dodajemy testowe zadania na starcie
   }
 
+ 
+
   Future<void> addTodo(String title) async {
     final newTodo = Todo(
       id: DateTime.now().millisecondsSinceEpoch,
