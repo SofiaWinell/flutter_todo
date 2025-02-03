@@ -5,7 +5,6 @@ class TodoList extends StatefulWidget {
   final List<Todo> todos;
   final Function(Todo) onToggle;
   final Function(Todo) onDelete;
-  
 
   const TodoList({
     Key? key,
@@ -36,11 +35,19 @@ class _TodoListState extends State<TodoList> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {}
+    // Jeśli chcesz obsługiwać przewijanie (np. ładowanie kolejnych zadań)
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      // Możesz dodać logikę ładowania kolejnych elementów, jeśli potrzebujesz.
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Proste sprawdzenie, czy lista 'todos' nie jest pusta
+    if (widget.todos.isEmpty) {
+      return const Center(child: Text('Brak zadań do wyświetlenia.'));
+    }
+
     return ListView.separated(
       controller: _scrollController,
       itemCount: widget.todos.length,
@@ -51,10 +58,10 @@ class _TodoListState extends State<TodoList> {
             : Icons.check_box_outline_blank;
 
         return ListTile(
-          key: Key(todo.id.toString()),
+          key: Key(todo.id.toString()), // Klucz dla każdego elementu (ważne przy dynamicznej liście)
           leading: Icon(statusIcon),
           title: Text(todo.title),
-          enabled: !todo.completed,
+          enabled: !todo.completed, // Wyłącza kliknięcie na ukończonym zadaniu
           onTap: () => widget.onToggle(todo),
           trailing: IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),

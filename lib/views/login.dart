@@ -22,15 +22,15 @@ class LoginState extends State<Login> {
       final bool success = await Provider.of<AuthProvider>(context, listen: false)
           .login(email, password);
 
-      if (!mounted) return;
+      if (!mounted) return;  // Zapewniamy, że kontekst jest jeszcze dostępny.
 
-      // Teraz porównujemy z false, nie null
-      if (!success) { // Jeśli success to false, wyświetlamy błąd
+      if (!success) {  // Jeśli login nie powiedzie się
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login failed.')),
         );
       } else {
-        Navigator.pushReplacementNamed(context, '/todos'); // Logowanie udane
+        // Przejdź do ekranu 'todos' jeśli logowanie powiodło się
+        Navigator.pushReplacementNamed(context, '/todos');
       }
     }
   }
@@ -86,6 +86,7 @@ class LoginState extends State<Login> {
     );
   }
 }
+
 
 
 
